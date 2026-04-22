@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Watering Reminder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <main class="page-shell">
+        <section class="hero">
+            <div>
+                <p class="eyebrow">Plant Care System</p>
+                <h1>Plant Watering Reminder</h1>
+                <p class="hero-copy">
+                    Track watering dates, surface overdue plants first, and keep your home garden healthy with a simple JSON-powered dashboard.
+                </p>
+            </div>
+            <div class="hero-card">
+                <p class="hero-label">Today's date</p>
+                <p class="hero-value">{{ today }}</p>
+                <p class="hero-label">Urgent plants</p>
+                <p class="hero-value water-drop">{{ urgent_count }} plants</p>
+            </div>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+
+        <section class="layout-grid">
+            <article class="panel form-panel">
+                <h2>Register a Plant</h2>
+                <form action="{{ url_for('add_plant') }}" method="post" class="plant-form">
+                    <label>
+                        Plant name
+                        <input type="text" name="name" placeholder="Tulsi" required>
+                    </label>
+                    <label>
+                        Plant type
+                        <input type="text" name="type" placeholder="Herb / Indoor / Flowering" required>
+                    </label>
+                    <label>
+                        Water every X days
+                        <input type="number" name="frequency_days" min="1" placeholder="3" required>
+                    </label>
+                    <label>
+                        Last watered date
+                        <input type="date" name="last_watered" required>
+                    </label>
+                    <button type="submit">Save Plant</button>
+                </form>
+            </article>
+
+            <article class="panel dashboard-panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Care Dashboard</h2>
+                        <p>Plants due today or overdue are automatically shown first.</p>
+                    </div>
+                </div>
+
+                <div class="plant-list">
+                    {% for plant in plants %}
+                        <article class="plant-card {% if plant.is_urgent %}plant-card-urgent{% endif %}">
+                            <div class="plant-card-top">
+                                <div>
+                                    <h3>{{ plant.name }}</h3>
+                                    <p>{{ plant.type }} | Every {{ plant.frequency_days }} day{% if plant.frequency_days != 1 %}s{% endif %}</p>
+                                </div>
+                                <span class="badge {{ plant.badge_class }}">{{ plant.status }}</span>
+                            </div>
+
+                            <dl class="plant-meta">
+                                <div>
+                                    <dt>Last Watered</dt>
+                                    <dd>{{ plant.last_watered }}</dd>
+                                </div>
+                                <div>
+                                    <dt>Next Watering</dt>
+                                    <dd>{{ plant.next_water }}</dd>
+                                </div>
+                            </dl>
+
+                            {% if plant.is_urgent %}
+                                <p class="urgent-note">Water me now alert</p>
+                            {% endif %}
+
+                            <form action="{{ url_for('water_plant', plant_id=plant.id) }}" method="post">
+                                <button type="submit" class="secondary-button">Mark Watered Today</button>
+                            </form>
+                        </article>
+                    {% else %}
+                        <p class="empty-state">No plants registered yet. Add your first plant to start reminders.</p>
+                    {% endfor %}
+                </div>
+            </article>
+        </section>
+    </main>
+</body>
+</html>

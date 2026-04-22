@@ -1,0 +1,25 @@
+{
+  "plants": [
+    {
+      "id": "1",
+      "name": "Tulsi",
+      "type": "Herb",
+      "frequency_days": 2,
+      "last_watered": "2026-04-20"
+    },
+    {
+      "id": "2",
+      "name": "Snake Plant",
+      "type": "Indoor",
+      "frequency_days": 7,
+      "last_watered": "2026-04-16"
+    },
+    {
+      "id": "3",
+      "name": "Tulsi",
+      "type": "Herb",
+      "frequency_days": 3,
+      "last_watered": "2026-05-20"
+    }
+  ]
+}
